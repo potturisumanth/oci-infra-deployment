@@ -11,19 +11,23 @@ variable "region" {
 
 variable "compartment_id" {
   description = "Compartment OCID where the infrastructure will be deployed"
+  default = "ocid1.tenancy.oc1..aaaaaaaaancvivxhuaqaq47c5p6smmm4sf7yesh6e75sluc2lisckbcx5zbq"
 }
 
 variable "availability_domain" {
   description = "Availability domain for the compute instance"
+  default = "AD-3"
 }
 
 variable "admin_password" {
   description = "Admin password for the Autonomous Database"
   sensitive = true
+  default = "441319@Ss"
 }
 
 variable "notification_topic_id" {
   description = "OCID of the notification topic for monitoring alerts"
+  default = "ocid1.onstopic.oc1.eu-frankfurt-1.amaaaaaakxm3yfqapdgy4xiwb5xcfpa2y5uqos6n7bkxdprf23zo7bc6hkra"
 }
 
 # Networking
