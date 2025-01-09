@@ -1,5 +1,6 @@
 provider "oci" {
-  auth = "InstancePrincipal"  # Use Instance Principal for authentication
+  version = "~> 5.0"  # Use a version that supports identity resources
+  auth = "InstancePrincipal"
   region = var.region
 }
 
