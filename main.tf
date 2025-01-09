@@ -121,6 +121,41 @@ resource "oci_monitoring_alarm" "cpu_alarm" {
   is_enabled              = true
 }
 
+# IAM Group and Role
+resource "oci_identity_group" "db_vcn_group" {
+  name        = "DB_VCN_Group"
+  description = "Group for creating VCN and ADB instances"
+}
+
+resource "oci_identity_custom_role" "db_vcn_role" {
+  compartment_id = var.compartment_id
+  name           = "DB_VCN_Creator"
+  description    = "Role to create and manage VCN and ADB"
+  
+  permissions = [
+    "oci:core:vcn:manage",                # Manage VCN
+    "oci:core:subnet:manage",             # Manage Subnets (optional)
+    "oci:database:autonomous-database:manage"  # Manage Autonomous Databases
+  ]
+}
+
+resource "oci_identity_policy" "db_vcn_policy" {
+  compartment_id = var.compartment_id
+  name           = "DB_VCN_Policy"
+  description    = "Policy to allow group to manage VCN and Autonomous Database"
+  
+  statements = [
+    "Allow group DB_VCN_Group to manage virtual-network-family in compartment ${var.compartment_id}",
+    "Allow group DB_VCN_Group to manage autonomous-database in compartment ${var.compartment_id}"
+  ]
+}
+
+resource "oci_identity_group_membership" "group_role_membership" {
+  group_id = oci_identity_group.db_vcn_group.id
+  user_id  = ocid1.user.oc1..aaaaaaaavic4n4t247hl7fmovtiqfv3pbi2kxsw6imdjmwcs4sfgodijgkwq  # Replace with actual user ID
+}
+
+# Outputs
 output "vcn_id" {
   value = oci_core_vcn.main_vcn.id
 }
