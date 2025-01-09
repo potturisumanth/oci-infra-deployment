@@ -6,7 +6,7 @@ provider "oci" {
 }
 
 variable "region" {
-  default = "us-ashburn-1"  # Specify the region
+  default = "eu-frankfurt-1"  # Specify the region
 }
 
 variable "compartment_id" {
