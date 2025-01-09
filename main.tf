@@ -1,28 +1,30 @@
-# OCI Free Tier Production-Grade Infrastructure
-
-# This Terraform configuration deploys a production-grade infrastructure using Oracle Cloud Infrastructure (OCI) Free Tier services. 
-
-# Modules and resources include:
-# - Virtual Cloud Network (VCN)
-# - Compute instances
-# - Autonomous Database
-# - Load Balancer
-# - Object Storage
-# - Monitoring and Logging
+# OCI Free Tier Production-Grade Infrastructure using Instance Principal
 
 provider "oci" {
-  tenancy_ocid = var.tenancy_ocid
-  user_ocid    = var.user_ocid
-  fingerprint  = var.fingerprint
-  private_key_path = var.private_key_path
-  region       = var.region
+  auth = "InstancePrincipal"  # Use Instance Principal for authentication
+  region = var.region
 }
 
-variable "tenancy_ocid" {}
-variable "user_ocid" {}
-variable "fingerprint" {}
-variable "private_key_path" {}
-variable "region" {}
+variable "region" {
+  default = "us-ashburn-1"  # Specify the region
+}
+
+variable "compartment_id" {
+  description = "Compartment OCID where the infrastructure will be deployed"
+}
+
+variable "availability_domain" {
+  description = "Availability domain for the compute instance"
+}
+
+variable "admin_password" {
+  description = "Admin password for the Autonomous Database"
+  sensitive = true
+}
+
+variable "notification_topic_id" {
+  description = "OCID of the notification topic for monitoring alerts"
+}
 
 # Networking
 resource "oci_core_vcn" "main_vcn" {
@@ -45,7 +47,7 @@ resource "oci_core_subnet" "public_subnet" {
   compartment_id    = var.compartment_id
   vcn_id            = oci_core_vcn.main_vcn.id
   dns_label         = "publicsubnet"
-  prohibit_public_ip_on_vnic = true
+  prohibit_public_ip_on_vnic = false
 }
 
 # Compute Instance
