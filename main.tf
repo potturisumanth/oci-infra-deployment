@@ -1,5 +1,13 @@
+terraform {
+  required_providers {
+    oci = {
+      source  = "hashicorp/oci"
+      version = "~> 6.0"  # Using version 6.0+ since the locked version is 6.21.0
+    }
+  }
+}
+
 provider "oci" {
-  version = "~> 5.0"  # Use a version that supports identity resources
   auth = "InstancePrincipal"
   region = var.region
 }
