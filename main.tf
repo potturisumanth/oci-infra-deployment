@@ -1,5 +1,3 @@
-# OCI Free Tier Production-Grade Infrastructure using Instance Principal
-
 provider "oci" {
   auth = "InstancePrincipal"  # Use Instance Principal for authentication
   region = var.region
@@ -42,7 +40,6 @@ resource "oci_core_internet_gateway" "internet_gateway" {
   display_name   = "FreeTier-InternetGateway"
   compartment_id = var.compartment_id
   vcn_id         = oci_core_vcn.main_vcn.id
-  is_enabled     = true
 }
 
 resource "oci_core_subnet" "public_subnet" {
@@ -97,29 +94,31 @@ resource "oci_load_balancer_load_balancer" "free_tier_lb" {
   shape          = "flexible"
 
   subnet_ids = [oci_core_subnet.public_subnet.id]
+}
 
-  backend_set {
-    name = "backend1"
-    policy = "ROUND_ROBIN"
-    health_checker {
-      protocol = "HTTP"
-      port     = 80
-      url_path = "/health"
-    }
+resource "oci_load_balancer_backend_set" "backend_set" {
+  load_balancer_id = oci_load_balancer_load_balancer.free_tier_lb.id
+  name             = "backend1"
+  policy           = "ROUND_ROBIN"
+
+  health_checker {
+    protocol = "HTTP"
+    port     = 80
+    url_path = "/health"
   }
 }
 
 # Monitoring
 resource "oci_monitoring_alarm" "cpu_alarm" {
-  compartment_id = var.compartment_id
-  display_name   = "High CPU Alarm"
-  metric_compartment_id = var.compartment_id
-  namespace      = "oci_computeagent"
-  query          = "CpuUtilization[1m]{resourceId = \"${oci_core_instance.free_tier_instance.id}\"}.mean() > 90"
-  severity       = "CRITICAL"
-
-  destinations = [var.notification_topic_id]
+  compartment_id          = var.compartment_id
+  display_name            = "High CPU Alarm"
+  metric_compartment_id   = var.compartment_id
+  namespace               = "oci_computeagent"
+  query                   = "CpuUtilization[1m]{resourceId = \"${oci_core_instance.free_tier_instance.id}\"}.mean() > 90"
+  severity                = "CRITICAL"
+  destinations            = [var.notification_topic_id]
   repeat_notification_duration = "PT15M"
+  is_enabled              = true
 }
 
 output "vcn_id" {
