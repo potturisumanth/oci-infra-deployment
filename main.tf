@@ -126,6 +126,6 @@ output "instance_ip" {
   value = oci_core_instance.free_tier_instance.public_ip
 }
 
-output "autonomous_database_url" {
-  value = oci_database_autonomous_database.free_tier_adb.connection_strings[0].apex
+output "adb_ocid" {
+  value = oci_database_autonomous_database.free_tier_adb.id
 }
