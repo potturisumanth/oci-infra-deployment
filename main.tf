@@ -152,7 +152,7 @@ resource "oci_identity_policy" "db_vcn_policy" {
 
 resource "oci_identity_group_membership" "group_role_membership" {
   group_id = oci_identity_group.db_vcn_group.id
-  user_id  = ocid1.user.oc1..aaaaaaaavic4n4t247hl7fmovtiqfv3pbi2kxsw6imdjmwcs4sfgodijgkwq  # Replace with actual user ID
+  user_id  = "ocid1.user.oc1..aaaaaaaavic4n4t247hl7fmovtiqfv3pbi2kxsw6imdjmwcs4sfgodijgkwq"  # Replace with actual user ID
 }
 
 # Outputs
